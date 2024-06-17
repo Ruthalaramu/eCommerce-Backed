@@ -1,0 +1,28 @@
+package com.ecommerce.ecommerce_Backed.Service;
+
+import com.ecommerce.ecommerce_Backed.Model.User;
+import com.ecommerce.ecommerce_Backed.Repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class CustomUserServiceImplementation implements UserDetailsService {
+    @Autowired
+private UserRepository userRepository;
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserDetails  userDetails=userRepository.findByMobileNumber(username);
+        if(userDetails==null){
+            throw new UsernameNotFoundException("User not found with this Number:"+username);
+        }
+        List<GrantedAuthority>authorities= new ArrayList<>();
+        return new org.springframework.security.core.userdetails.User(userDetails.getUsername(),userDetails.getPassword(),authorities);
+    }
+}
